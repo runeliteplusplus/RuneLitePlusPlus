@@ -32,9 +32,12 @@ public class ZulrahOverlay extends Overlay {
 
 	@Override
 	public Dimension render(Graphics2D graphics) {
+		if (!config.EnableZulrahPrayerHelper()) {
+			return null;
+		}
 		NPC Zulrah = plugin.Zulrah;
 		if (Zulrah != null) {
-			if (plugin.prayerconserve) {
+			if (plugin.prayerconserve && plugin.nextprayerendticks == 0) {
 				Player player = client.getLocalPlayer();
 				HeadIcon icon = player.getOverheadIcon();
 				if (icon != null) {
@@ -44,7 +47,21 @@ public class ZulrahOverlay extends Overlay {
 					final int width = (int) client.getRealDimensions().getWidth();
 					java.awt.Point jpoint = new java.awt.Point((width / 2) - textWidth, textHeight + 75);
 					panelComponent.getChildren().clear();
-					panelComponent.getChildren().add(TitleComponent.builder().text("Disable Overhead Prayer").color(Color.RED).build());
+					panelComponent.getChildren().add(TitleComponent.builder().text(text).color(Color.RED).build());
+					panelComponent.setPreferredLocation(jpoint);
+					panelComponent.render(graphics);
+				}
+			} else if (plugin.nextprayerendticks != 0) {
+				Player player = client.getLocalPlayer();
+				HeadIcon icon = player.getOverheadIcon();
+				if (icon == null) {
+					final String text = "Protect from MAGIC: " + (plugin.nextprayerendticks - plugin.ticks);
+					final int textWidth = graphics.getFontMetrics().stringWidth(text);
+					final int textHeight = graphics.getFontMetrics().getAscent() - graphics.getFontMetrics().getDescent();
+					final int width = (int) client.getRealDimensions().getWidth();
+					java.awt.Point jpoint = new java.awt.Point((width / 2) - textWidth, textHeight + 75);
+					panelComponent.getChildren().clear();
+					panelComponent.getChildren().add(TitleComponent.builder().text(text).color(Color.GREEN).build());
 					panelComponent.setPreferredLocation(jpoint);
 					panelComponent.render(graphics);
 				}

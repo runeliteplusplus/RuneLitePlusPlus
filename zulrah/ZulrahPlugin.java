@@ -102,6 +102,7 @@ public class ZulrahPlugin extends Plugin
 	int not;
 	int lastphase;
 	int phase;
+	int nextprayerendticks;
 	boolean phase1 = true;
 	boolean phase2 = true;
 	boolean phase3 = true;
@@ -117,25 +118,25 @@ public class ZulrahPlugin extends Plugin
 	List<Integer> phases = new ArrayList<>();
 	List<LocalPoint> locations = new ArrayList<>();
 
-	ArrayList<Integer> Phase1types = new ArrayList<>(Arrays.asList(2042, 2043, 2044, 2042, 2044, 2043, 2042, 2044, 2042 /* Jad Phase */, 2043));
-	ArrayList<LocalPoint> Phase1pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosCenter, ZulrahPosCenter, ZulrahPosEast, ZulrahPosNorth, ZulrahPosCenter, ZulrahPosWest, ZulrahPosNorth, ZulrahPosEast /* Jad Phase */, ZulrahPosCenter));
-	ArrayList<LocalPoint> Phase1tiles = new ArrayList<>(Arrays.asList(SWCornerTile, SWCornerTile, SWCornerTile, EPillar, EPillarN, EPillar, Middle /* This needs to be middle of arc */, EPillar, EPillar, SWCornerTile));
+	ArrayList<Integer> Phase1types = new ArrayList<>(Arrays.asList(2042, 2043, 2044, 2042, 2044, 2043, 2042, 2044, 2042, 2043));
+	ArrayList<LocalPoint> Phase1pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosCenter, ZulrahPosCenter, ZulrahPosEast, ZulrahPosNorth, ZulrahPosCenter, ZulrahPosWest, ZulrahPosNorth, ZulrahPosEast, ZulrahPosCenter));
+	ArrayList<LocalPoint> Phase1tiles = new ArrayList<>(Arrays.asList(SWCornerTile, SWCornerTile, SWCornerTile, EPillar, EPillarN, EPillar, Middle, EPillar, EPillar, SWCornerTile));
 	ArrayList<Integer> Phase1ticks = new ArrayList<>(Arrays.asList(28, 20, 18, 28, 39, 22, 20, 36, 48, 20));
 
-	ArrayList<Integer> Phase2types = new ArrayList<>(Arrays.asList(2042, 2043, 2044, 2042, 2043, 2044, 2042, 2044, 2042 /* Jad Phase */, 2043));
-	ArrayList<LocalPoint> Phase2pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosCenter, ZulrahPosCenter, ZulrahPosNorth, ZulrahPosCenter, ZulrahPosEast, ZulrahPosNorth, ZulrahPosNorth, ZulrahPosEast /* Jad Phase */, ZulrahPosCenter));
+	ArrayList<Integer> Phase2types = new ArrayList<>(Arrays.asList(2042, 2043, 2044, 2042, 2043, 2044, 2042, 2044, 2042, 2043));
+	ArrayList<LocalPoint> Phase2pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosCenter, ZulrahPosCenter, ZulrahPosNorth, ZulrahPosCenter, ZulrahPosEast, ZulrahPosNorth, ZulrahPosNorth, ZulrahPosEast, ZulrahPosCenter));
 	ArrayList<LocalPoint> Phase2tiles = new ArrayList<>(Arrays.asList(SWCornerTile, SWCornerTile, SWCornerTile, EPillar, EPillar, EPillar, WPillar, WPillarN, EPillar, SWCornerTile));
 	ArrayList<Integer> Phase2ticks = new ArrayList<>(Arrays.asList(28, 20, 17, 39, 22, 20, 28, 36, 48, 21));
 
-	ArrayList<Integer> Phase3types = new ArrayList<>(Arrays.asList(2042, 2042, 2043, 2044, 2042, 2044, 2042, 2042, 2044, 2042 /* Jad Phase */, 2044));
-	ArrayList<LocalPoint> Phase3pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosWest, ZulrahPosCenter, ZulrahPosEast, ZulrahPosNorth, ZulrahPosWest, ZulrahPosCenter, ZulrahPosEast, ZulrahPosCenter, ZulrahPosWest /* Jad Phase */, ZulrahPosCenter));
+	ArrayList<Integer> Phase3types = new ArrayList<>(Arrays.asList(2042, 2042, 2043, 2044, 2042, 2044, 2042, 2042, 2044, 2042, 2044));
+	ArrayList<LocalPoint> Phase3pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosWest, ZulrahPosCenter, ZulrahPosEast, ZulrahPosNorth, ZulrahPosWest, ZulrahPosCenter, ZulrahPosEast, ZulrahPosCenter, ZulrahPosWest, ZulrahPosCenter));
 	ArrayList<LocalPoint> Phase3tiles = new ArrayList<>(Arrays.asList(SWCornerTile, SWCornerTile, SECornerTile, EPillar, WPillar, WPillar, EPillar, EPillar, WPillar, WPillar, SWCornerTile));
 	ArrayList<Integer> Phase3ticks = new ArrayList<>(Arrays.asList(28, 30, 40, 20, 20, 20, 25, 20, 36, 35, 18));
 
-	ArrayList<Integer> Phase4types = new ArrayList<>(Arrays.asList(2042, 2044, 2042, 2044, 2043, 2042, 2042, 2044, 2042, 2044, 2042 /* Jad Phase */, 2044));
-	ArrayList<LocalPoint> Phase4pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosWest, ZulrahPosNorth, ZulrahPosEast, ZulrahPosCenter, ZulrahPosWest, ZulrahPosNorth, ZulrahPosEast, ZulrahPosCenter, ZulrahPosCenter, ZulrahPosWest /* Jad Phase */, ZulrahPosCenter));
+	ArrayList<Integer> Phase4types = new ArrayList<>(Arrays.asList(2042, 2044, 2042, 2044, 2043, 2042, 2042, 2044, 2042, 2044, 2042, 2044));
+	ArrayList<LocalPoint> Phase4pos = new ArrayList<>(Arrays.asList(ZulrahPosCenter, ZulrahPosWest, ZulrahPosNorth, ZulrahPosEast, ZulrahPosCenter, ZulrahPosWest, ZulrahPosNorth, ZulrahPosEast, ZulrahPosCenter, ZulrahPosCenter, ZulrahPosWest, ZulrahPosCenter));
 	ArrayList<LocalPoint> Phase4tiles = new ArrayList<>(Arrays.asList(SWCornerTile, SWCornerTile, EPillar, EPillar, WPillar, WPillar, WPillar, EPillar, WPillar, WPillar, WPillar, SWCornerTile));
-	ArrayList<Integer> Phase4ticks = new ArrayList<>(Arrays.asList(28, 36, 24, 30, 28, 17, 34, 33, 20, 30, 29, 18));
+	ArrayList<Integer> Phase4ticks = new ArrayList<>(Arrays.asList(28, 36, 24, 30, 28, 17, 34, 33, 20, 27, 29, 18));
 
 	@Subscribe
 	public void onGameTick(GameTick event) {
@@ -190,6 +191,8 @@ public class ZulrahPlugin extends Plugin
 						ticks = 0;
 						prayerconserve = false;
 						phaseticks = 34;
+						not = 0;
+						nextprayerendticks = 0;
 					}
 					lastloc = Zulrah.getLocalLocation();
 					lastphase = Zulrah.getId();
@@ -353,9 +356,16 @@ public class ZulrahPlugin extends Plugin
 					}
 				} else {
 					ticks++;
+					if (phases.size() == 1 && phaseticks == 34) {
+						if (ticks >= 18) {
+							prayerconserve = true;
+						} else {
+							prayerconserve = false;
+						}
+					}
 					if (not == 2) {
 						if (lastphase == 2043) {
-							if (ticks >= 13 && ticks <= 14) {
+							if (ticks >= 12 && ticks <= 13) {
 								MeleeTile = SWCornerTileMelee;
 							} else {
 								MeleeTile = null;
@@ -381,7 +391,7 @@ public class ZulrahPlugin extends Plugin
 								prayerconserve = false;
 							}
 						} else if (phases.size() == 10) {
-							if (ticks >= 13 && ticks <= 14) {
+							if (ticks >= 12 && ticks <= 13) {
 								MeleeTile = SWCornerTileMelee;
 							} else {
 								MeleeTile = null;
@@ -412,7 +422,7 @@ public class ZulrahPlugin extends Plugin
 							}
 						} else if (phases.size() == 5 || phases.size() == 7 || phases.size() == 10) {
 							if (phases.size() == 10) {
-								if (ticks >= 13 && ticks <= 14) {
+								if (ticks >= 12 && ticks <= 13) {
 									MeleeTile = SWCornerTileMelee;
 								} else {
 									MeleeTile = null;
@@ -433,7 +443,7 @@ public class ZulrahPlugin extends Plugin
 							prayerconserve = true;
 							if (ticks >= 24 && ticks <= 25) {
 								MeleeTile = SECornerTileMelee;
-							} else if (ticks >= 30 && ticks <= 32) {
+							} else if (ticks >= 32 && ticks <= 33) {
 								MeleeTile = SECornerTile;
 							} else {
 								MeleeTile = null;
@@ -441,7 +451,7 @@ public class ZulrahPlugin extends Plugin
 						}  else if (phases.size() == 7 || phases.size() == 11) {
 							prayerconserve = true;
 						} else if (phases.size() == 9) {
-							if (ticks >= 20) {
+							if (ticks >= 16) {
 								prayerconserve = true;
 							} else {
 								prayerconserve = false;
@@ -451,7 +461,13 @@ public class ZulrahPlugin extends Plugin
 						}
 					} else if (phase == 4) {
 						if (phases.size() == 2) {
-							if (ticks >= 20) {
+							if (ticks >= 10 && ticks <= 16) {
+								nextprayerendticks = 16;
+							} else {
+								nextprayerendticks = 0;
+							}
+
+							if (ticks >= 16) {
 								prayerconserve = false;
 							} else {
 								prayerconserve = true;
@@ -463,15 +479,27 @@ public class ZulrahPlugin extends Plugin
 								prayerconserve = false;
 							}
 						} else if (phases.size() == 4) {
-							if (ticks <= 14) {
+							if (ticks >= 10 && ticks <= 16) {
+								nextprayerendticks = 16;
+							} else {
+								nextprayerendticks = 0;
+							}
+
+							if (ticks <= 16) {
 								prayerconserve = true;
 							} else {
 								prayerconserve = false;
 							}
 						} else if (phases.size() == 5 || phases.size() == 7 || phases.size() == 12) {
 							prayerconserve = true;
-						} else if (phases.size() == 10) {
+						} else if (phases.size() == 8) {
 							if (ticks >= 18) {
+								prayerconserve = true;
+							} else {
+								prayerconserve = false;
+							}
+						} else if (phases.size() == 10) {
+							if (ticks >= 14) {
 								prayerconserve = true;
 							} else {
 								prayerconserve = false;
@@ -501,6 +529,8 @@ public class ZulrahPlugin extends Plugin
 				restart = false;
 				ticks = 0;
 				prayerconserve = false;
+				not = 0;
+				nextprayerendticks = 0;
 			}
 		}
 	}

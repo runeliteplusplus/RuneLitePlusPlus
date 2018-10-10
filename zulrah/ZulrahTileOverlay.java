@@ -109,6 +109,7 @@ public class ZulrahTileOverlay extends Overlay
 				final Polygon poly = Perspective.getCanvasTilePoly(client, plugin.MeleeTile);
 				if (poly != null) {
 					Point textLocationtile = Perspective.getCanvasTextLocation(client, graphics, plugin.MeleeTile, "MOVE HERE NOW!", 50);
+					graphics.setFont(FontManager.getRunescapeBoldFont());
 					OverlayUtil.renderTextLocation(graphics, textLocationtile, "MOVE HERE NOW!", Color.WHITE);
 					OverlayUtil.renderPolygon(graphics, poly, Color.BLACK);
 				}

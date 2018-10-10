@@ -13,4 +13,12 @@ public interface ZulrahConfig extends Config {
 		description = "Configures whether or not to enable Zulrah Helper."
 	)
 	default boolean EnableZulrah() { return true; }
+
+	@ConfigItem(
+			position = 1,
+			keyName = "zulrahprayenable",
+			name = "Show Prayer Helper",
+			description = "Configures whether or not to show when to pray at Zulrah."
+	)
+	default boolean EnableZulrahPrayerHelper() { return true; }
 }
