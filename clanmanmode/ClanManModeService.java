@@ -106,7 +106,7 @@ public class ClanManModeService
 						}
 					}
 					if (config.highlightAttackable()) {
-						if (config.hideAttackable() && plugin.ticks >= config.hideTime()) {
+						if ((config.hideAttackable() && plugin.ticks >= config.hideTime()) || plugin.clan.containsKey(player.getName())) {
 							continue;
 						}
 						if (player.getCombatLevel() <= maxatk && player.getCombatLevel() >= minatk) {
