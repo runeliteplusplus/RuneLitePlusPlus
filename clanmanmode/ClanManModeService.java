@@ -107,7 +107,7 @@ public class ClanManModeService
 					}
 					if (config.highlightAttackable()) {
 						if (config.hideAttackable() && plugin.ticks >= config.hideTime()) {
-							return;
+							continue;
 						}
 						if (player.getCombatLevel() <= maxatk && player.getCombatLevel() >= minatk) {
 							consumer.accept(player, config.getAttackableColor());
