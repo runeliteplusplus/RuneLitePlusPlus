@@ -1,6 +1,6 @@
 package net.runelite.client.plugins.clanmanmode;
 
-import com.google.common.eventbus.Subscribe;
+import net.runelite.client.eventbus.Subscribe;
 import com.google.errorprone.annotations.Var;
 import com.google.inject.Provides;
 import java.awt.Color;
