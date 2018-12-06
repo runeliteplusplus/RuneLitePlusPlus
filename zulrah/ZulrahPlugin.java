@@ -1,6 +1,6 @@
 package net.runelite.client.plugins.zulrah;
 
-import com.google.common.eventbus.Subscribe;
+import net.runelite.client.eventbus.Subscribe;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import java.awt.*;
