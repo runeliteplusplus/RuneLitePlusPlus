@@ -17,14 +17,6 @@ public interface FreezeTimersConfig extends Config {
 
 	@ConfigItem(
 			position = 1,
-			keyName = "selffreeze",
-			name = "Enable freeze timers on yourself",
-			description = "Configures whether or not to show freeze timers on your own character."
-	)
-	default boolean EnableFreezeTimersSelf() { return false; }
-
-	@ConfigItem(
-			position = 2,
 			keyName = "tilehighlight",
 			name = "Frozen opponent tile highlighting",
 			description = "Configures whether or not to highlight tiles frozen opponents are standing on."
@@ -32,7 +24,7 @@ public interface FreezeTimersConfig extends Config {
 	default boolean drawTiles() { return false; }
 
 	@ConfigItem(
-		position = 3,
+		position = 2,
 		keyName = "timercolor",
 		name = "Freeze Timer Color",
 		description = "Color of freeze timer"

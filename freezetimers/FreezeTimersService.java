@@ -27,8 +27,6 @@ public class FreezeTimersService
 	public void forEachPlayer(final BiConsumer<Player, Color> consumer)
 	{
 
-		final Player localPlayer = client.getLocalPlayer();
-
 		for (Player player : client.getPlayers())
 		{
 			if (player == null || player.getName() == null)
@@ -36,24 +34,24 @@ public class FreezeTimersService
 				continue;
 			}
 
-			if (!config.EnableFreezeTimersSelf()) {
-				if (player == localPlayer) {
-					return;
-				}
-			}
-
 			String name = player.getName();
 			int freezetype = plugin.freezetype(name);
 			long dtime = plugin.opponentfreezetime(name);
 			int freezetime = 0;
-			if (freezetype == 3 || freezetype == 4) {
+			if (freezetype == 1 || freezetype == 4) {
 				freezetime = 5000;
 			} else if (freezetype == 2 || freezetype == 5) {
 				freezetime = 10000;
-			} else if (freezetype == 1 || freezetype == 6) {
+			} else if (freezetype == 3 || freezetype == 6) {
 				freezetime = 15000;
 			} else if (freezetype == 7) {
 				freezetime = 20000;
+			} else if (freezetype == 8) {
+				freezetime = 2500;
+			} else if (freezetype == 9) {
+				freezetime = 5000;
+			} else if (freezetype == 10) {
+				freezetime = 7500;
 			}
 			if (dtime > 0) {
 				long currenttime = System.currentTimeMillis();

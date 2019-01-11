@@ -1,17 +1,18 @@
 package net.runelite.client.plugins.freezetimers;
 
+import net.runelite.api.events.*;
 import net.runelite.client.eventbus.Subscribe;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.runelite.api.*;
 
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.GraphicChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.plugins.Plugin;
@@ -50,13 +51,16 @@ public class FreezeTimersPlugin extends Plugin
 	}
 
 	private static final int[] FREEZE_ICONS = {
-		SpriteID.SPELL_ENTANGLE,
-		SpriteID.SPELL_SNARE,
-		SpriteID.SPELL_BIND,
-		SpriteID.SPELL_ICE_RUSH,
-		SpriteID.SPELL_ICE_BURST,
-		SpriteID.SPELL_ICE_BLITZ,
-		SpriteID.SPELL_ICE_BARRAGE
+			SpriteID.SPELL_BIND,
+			SpriteID.SPELL_SNARE,
+			SpriteID.SPELL_ENTANGLE,
+			SpriteID.SPELL_ICE_RUSH,
+			SpriteID.SPELL_ICE_BURST,
+			SpriteID.SPELL_ICE_BLITZ,
+			SpriteID.SPELL_ICE_BARRAGE,
+			SpriteID.SPELL_BIND,
+			SpriteID.SPELL_SNARE,
+			SpriteID.SPELL_ENTANGLE
 	};
 
 	private static final Dimension FREEZE_ICON_DIMENSION = new Dimension(25, 25);
@@ -89,52 +93,131 @@ public class FreezeTimersPlugin extends Plugin
 	Map<String, WorldPoint> frozenthingpoints = new HashMap<>();
 	Map<String, Integer> freezetype = new HashMap<>();
 
+
+	Map<Integer, Integer> magexp = new HashMap<>();
+	int lastxp;
+	int ticks;
+	int currticks;
+	String currtarget;
+	String spell;
+
 	@Subscribe
-	public void onGraphicChanged(GraphicChanged event)
-	{
-		if (!config.EnableFreezeTimers()) {
-			return;
+	public void onMenuOptionClicked(MenuOptionClicked event) {
+		if (event.getMenuTarget().contains("->")) {
+			final Pattern spattern = Pattern.compile(">(.+?)</col>");
+			final Pattern ppattern = Pattern.compile("> <col=ffffff>(.+?)<col=");
+			final Matcher smatch = spattern.matcher(event.getMenuTarget());
+			final Matcher pmatch = ppattern.matcher(event.getMenuTarget());
+			smatch.find();
+			pmatch.find();
+			if (smatch.group(1) != null && pmatch.group(1) != null) {
+				currticks = ticks;
+				spell = smatch.group(1);
+				currtarget = pmatch.group(1).replace(" ", " ");
+			}
 		}
+	}
 
-		Actor actor = event.getActor();
-
-		if (actor instanceof NPC) {
-			return;
+	@Subscribe
+	public void onExperienceChanged(ExperienceChanged event) {
+		if (event.getSkill() == Skill.MAGIC) {
+			final int xp = client.getSkillExperience(Skill.MAGIC);
+			int gains = xp - lastxp;
+			lastxp = xp;
+			if (!magexp.containsKey(ticks)) {
+				magexp.clear();
+				magexp.put(ticks, gains);
+			}
 		}
+	}
 
-		if (frozenthings.containsKey(actor.getName())) {
-			return;
-		}
 
-		if (actor.getGraphic() == GraphicID.ENTANGLE) {
-			frozenthings.put(actor.getName(), System.currentTimeMillis());
-			frozenthingpoints.put(actor.getName(), actor.getWorldLocation());
-			freezetype.put(actor.getName(), 1);
-		} else if (actor.getGraphic() == GraphicID.SNARE) {
-			frozenthings.put(actor.getName(), System.currentTimeMillis());
-			frozenthingpoints.put(actor.getName(), actor.getWorldLocation());
-			freezetype.put(actor.getName(), 2);
-		} else if (actor.getGraphic() == GraphicID.BIND) {
-			frozenthings.put(actor.getName(), System.currentTimeMillis());
-			frozenthingpoints.put(actor.getName(), actor.getWorldLocation());
-			freezetype.put(actor.getName(), 3);
-		} else if (actor.getGraphic() == GraphicID.ICE_RUSH) {
-			frozenthings.put(actor.getName(), System.currentTimeMillis());
-			frozenthingpoints.put(actor.getName(), actor.getWorldLocation());
-			freezetype.put(actor.getName(), 4);
-		} else if (actor.getGraphic() == GraphicID.ICE_BURST) {
-			frozenthings.put(actor.getName(), System.currentTimeMillis());
-			frozenthingpoints.put(actor.getName(), actor.getWorldLocation());
-			freezetype.put(actor.getName(), 5);
-		} else if (actor.getGraphic() == GraphicID.ICE_BLITZ) {
-			frozenthings.put(actor.getName(), System.currentTimeMillis());
-			frozenthingpoints.put(actor.getName(), actor.getWorldLocation());
-			freezetype.put(actor.getName(), 6);
-		} else if (actor.getGraphic() == GraphicID.ICE_BARRAGE) {
-			frozenthings.put(actor.getName(), System.currentTimeMillis());
-			frozenthingpoints.put(actor.getName(), actor.getWorldLocation());
-			freezetype.put(actor.getName(), 7);
+	@Subscribe
+	public void onGameTick(GameTick event) {
+		int xp = 0;
+		boolean praymage = false;
+		if (magexp.containsKey(ticks)) {
+			xp = magexp.get(ticks);
 		}
+		if (xp > 0 && currtarget != null) {
+			if (frozenthings.containsKey(currtarget)) {
+				currtarget = null;
+				return;
+			}
+				WorldPoint targetpos = null;
+				for (Player player : client.getPlayers()) {
+					if (player == null) {
+						continue;
+					}
+					String cname = player.getName();
+					if (cname.equals(currtarget)) {
+						if (player.getOverheadIcon() != null) {
+							if (player.getOverheadIcon().equals(HeadIcon.MAGIC)) {
+								praymage = true;
+							}
+						}
+						targetpos = player.getWorldLocation();
+						break;
+					}
+
+				}
+
+				if (targetpos != null) {
+					if (spell.equals("Bind") && xp > 30) {
+						frozenthings.put(currtarget, System.currentTimeMillis());
+						frozenthingpoints.put(currtarget, targetpos);
+						if (praymage) {
+							freezetype.put(currtarget, 8);
+						} else {
+							freezetype.put(currtarget, 1);
+						}
+					} else if (spell.equals("Snare") && xp > 60) {
+						frozenthings.put(currtarget, System.currentTimeMillis());
+						frozenthingpoints.put(currtarget, targetpos);
+						if (praymage) {
+							freezetype.put(currtarget, 9);
+						} else {
+							freezetype.put(currtarget, 2);
+						}
+					} else if (spell.equals("Entangle") && xp >= 89) {
+						frozenthings.put(currtarget, System.currentTimeMillis());
+						frozenthingpoints.put(currtarget, targetpos);
+						if (praymage) {
+							freezetype.put(currtarget, 10);
+						} else {
+							freezetype.put(currtarget, 3);
+						}
+					} else if (spell.equals("Ice Rush") && xp > 34) {
+						frozenthings.put(currtarget, System.currentTimeMillis());
+						frozenthingpoints.put(currtarget, targetpos);
+						freezetype.put(currtarget, 4);
+					} else if (spell.equals("Ice Burst") && xp > 40) {
+						frozenthings.put(currtarget, System.currentTimeMillis());
+						frozenthingpoints.put(currtarget, targetpos);
+						freezetype.put(currtarget, 5);
+					} else if (spell.equals("Ice Blitz") && xp > 46) {
+						frozenthings.put(currtarget, System.currentTimeMillis());
+						frozenthingpoints.put(currtarget, targetpos);
+						freezetype.put(currtarget, 6);
+					} else if (spell.equals("Ice Barrage") && xp > 52) {
+						frozenthings.put(currtarget, System.currentTimeMillis());
+						frozenthingpoints.put(currtarget, targetpos);
+						freezetype.put(currtarget, 7);
+					}
+				}
+		}
+		if (currtarget != null && ticks > currticks + 1) {
+			Player local = client.getLocalPlayer();
+			Actor interacting = local.getInteracting();
+			if (interacting != null) {
+				if (!interacting.getName().equals(currtarget)) {
+					currtarget = null;
+				}
+			} else {
+				currtarget = null;
+			}
+		}
+		ticks++;
 	}
 
 	public long opponentfreezetime(String name) {

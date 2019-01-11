@@ -50,19 +50,25 @@ public class FreezeTimersOverlay extends Overlay
 		int timer = 0;
 		String name = actor.getName();
 		int freezetype = plugin.freezetype(name);
-		int offset = actor.getLogicalHeight() + 40;
+		int offset = actor.getLogicalHeight() + 30;
 		long dtime = plugin.opponentfreezetime(name);
 		Point textLocation = null;
 		HeadIcon headIcon = actor.getOverheadIcon();
 		int freezetime = 0;
-		if (freezetype == 3 || freezetype == 4) {
+		if (freezetype == 1 || freezetype == 4) {
 			freezetime = 5000;
 		} else if (freezetype == 2 || freezetype == 5) {
 			freezetime = 10000;
-		} else if (freezetype == 1 || freezetype == 6) {
+		} else if (freezetype == 3 || freezetype == 6) {
 			freezetime = 15000;
 		} else if (freezetype == 7) {
 			freezetime = 20000;
+		} else if (freezetype == 8) {
+			freezetime = 2500;
+		} else if (freezetype == 9) {
+			freezetime = 5000;
+		} else if (freezetype == 10) {
+			freezetime = 7500;
 		}
 
 		long currenttime = System.currentTimeMillis();
