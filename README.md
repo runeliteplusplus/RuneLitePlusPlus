@@ -23,6 +23,6 @@ Please note when running .jar files for your client (instead of the typical .exe
 
 The .jar file we provide is always vanilla Runelite compiled with our additonal plugins. You can verify authenticity by manually building the .jar and comparing MD5 hashes.
 
-The current MD5 hash of client-1.5.14-SNAPSHOT-shaded.jar: ee6eab4e1f3c199f8db8659d807ada41
+The current MD5 hash of client-1.5.14-SNAPSHOT-shaded.jar: abb330141c062ed52eee42b4c27364c4
 
 If you build runelite with our open source plugins and get any other result, **DO NOT DOWNLOAD AND RUN OUR .JAR!!!**
