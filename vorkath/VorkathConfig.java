@@ -4,6 +4,8 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
+import java.awt.*;
+
 @ConfigGroup("vorkath")
 public interface VorkathConfig extends Config {
 	@ConfigItem(
@@ -13,5 +15,21 @@ public interface VorkathConfig extends Config {
 		description = "Configures whether or not to enable Vorkath Helper."
 	)
 	default boolean EnableVorkath() { return true; }
+
+	@ConfigItem(
+			position = 1,
+			keyName = "countercolor",
+			name = "Indicator color",
+			description = "Configures color of text displaying Vorkath hits left to special attack."
+	)
+	default Color CounterColor() { return Color.YELLOW; }
+
+	@ConfigItem(
+			position = 2,
+			keyName = "countersize",
+			name = "Bold indicator",
+			description = "Configures if text indicator is bold or not."
+	)
+	default boolean BoldText() { return true; }
 
 }

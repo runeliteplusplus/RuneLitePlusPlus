@@ -59,6 +59,12 @@ public class VorkathPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception {
 		overlayManager.remove(VorkathOverlay);
+		Vorkath = null;
+		hits = 0;
+		fireball = null;
+		fireballticks = 0;
+		ice = false;
+		lastattack = 0;
 	}
 
 	@Subscribe

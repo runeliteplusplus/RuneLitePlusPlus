@@ -4,6 +4,9 @@ import java.awt.*;
 import javax.inject.Inject;
 
 import net.runelite.api.*;
+import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldArea;
+import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.*;
 import net.runelite.client.ui.overlay.components.PanelComponent;
 
@@ -28,12 +31,37 @@ public class VorkathOverlay extends Overlay {
 
 	@Override
 	public Dimension render(Graphics2D graphics) {
+		if (!config.EnableVorkath()) {
+			return null;
+		}
+		Actor local = client.getLocalPlayer();
+
+		WorldArea area = local.getWorldArea();
+		if (area == null)
+		{
+			return null;
+		}
+
 		NPC Vorkath = plugin.Vorkath;
 		if (Vorkath != null) {
 			if (plugin.fireball != null) {
 				final Polygon poly = Perspective.getCanvasTilePoly(client, plugin.fireball);
 				if (poly != null) {
 					OverlayUtil.renderPolygon(graphics, poly, Color.RED);
+				}
+
+				for (int dx = -1; dx <= 1; dx++)  {
+					for (int dy = -1; dy <= 1; dy++) {
+						if (dx == 0 && dy == 0) {
+							continue;
+						}
+						LocalPoint lp = new LocalPoint(plugin.fireball.getX() + dx * Perspective.LOCAL_TILE_SIZE + dx * Perspective.LOCAL_TILE_SIZE * (area.getWidth() - 1) / 2, plugin.fireball.getY() + dy * Perspective.LOCAL_TILE_SIZE + dy * Perspective.LOCAL_TILE_SIZE * (area.getHeight() - 1) / 2);
+						Polygon polyadj = Perspective.getCanvasTilePoly(client, lp);
+						if (polyadj != null)
+						{
+							OverlayUtil.renderPolygon(graphics, polyadj, Color.ORANGE);
+						}
+					}
 				}
 			}
 
@@ -43,7 +71,11 @@ public class VorkathOverlay extends Overlay {
 				}
 			}
 
-			OverlayUtil.renderTextLocation(graphics, Vorkath.getCanvasTextLocation(graphics, Integer.toString(7 - plugin.hits), Vorkath.getLogicalHeight() + 40), Integer.toString(7 - plugin.hits), Color.WHITE);
+			if (config.BoldText()) {
+				graphics.setFont(FontManager.getRunescapeBoldFont());
+			}
+			OverlayUtil.renderTextLocation(graphics, Vorkath.getCanvasTextLocation(graphics, Integer.toString(7 - plugin.hits), Vorkath.getLogicalHeight() + 40), Integer.toString(7 - plugin.hits), config.CounterColor());
+			graphics.setFont(FontManager.getRunescapeFont());
 		}
 		return null;
 	}
