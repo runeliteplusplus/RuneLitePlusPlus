@@ -45,24 +45,29 @@ public class VorkathOverlay extends Overlay {
 		NPC Vorkath = plugin.Vorkath;
 		if (Vorkath != null) {
 			if (plugin.fireball != null) {
-				final Polygon poly = Perspective.getCanvasTilePoly(client, plugin.fireball);
-				if (poly != null) {
-					OverlayUtil.renderPolygon(graphics, poly, Color.RED);
-				}
-
-				for (int dx = -1; dx <= 1; dx++)  {
-					for (int dy = -1; dy <= 1; dy++) {
-						if (dx == 0 && dy == 0) {
-							continue;
-						}
-						LocalPoint lp = new LocalPoint(plugin.fireball.getX() + dx * Perspective.LOCAL_TILE_SIZE + dx * Perspective.LOCAL_TILE_SIZE * (area.getWidth() - 1) / 2, plugin.fireball.getY() + dy * Perspective.LOCAL_TILE_SIZE + dy * Perspective.LOCAL_TILE_SIZE * (area.getHeight() - 1) / 2);
-						Polygon polyadj = Perspective.getCanvasTilePoly(client, lp);
-						if (polyadj != null)
-						{
-							OverlayUtil.renderPolygon(graphics, polyadj, Color.ORANGE);
+				if (config.TileHighlight() == TileHighlight.Single) {
+					final Polygon poly = Perspective.getCanvasTilePoly(client, plugin.fireball);
+					if (poly != null) {
+						OverlayUtil.renderPolygon(graphics, poly, Color.RED);
+					}
+				} else if (config.TileHighlight() == TileHighlight.All) {
+					for (int dx = -1; dx <= 1; dx++) {
+						for (int dy = -1; dy <= 1; dy++) {
+							if (dx == 0 && dy == 0) {
+								continue;
+							}
+							LocalPoint lp = new LocalPoint(plugin.fireball.getX() + dx * Perspective.LOCAL_TILE_SIZE + dx * Perspective.LOCAL_TILE_SIZE * (area.getWidth() - 1) / 2, plugin.fireball.getY() + dy * Perspective.LOCAL_TILE_SIZE + dy * Perspective.LOCAL_TILE_SIZE * (area.getHeight() - 1) / 2);
+							Polygon polyadj = Perspective.getCanvasTilePoly(client, lp);
+							if (polyadj != null) {
+								OverlayUtil.renderPolygon(graphics, polyadj, Color.ORANGE);
+							}
 						}
 					}
 				}
+			}
+
+			if (config.BoldText()) {
+				graphics.setFont(FontManager.getRunescapeBoldFont());
 			}
 
 			if (plugin.venomticks != 0) {
@@ -71,9 +76,6 @@ public class VorkathOverlay extends Overlay {
 				}
 			}
 
-			if (config.BoldText()) {
-				graphics.setFont(FontManager.getRunescapeBoldFont());
-			}
 			OverlayUtil.renderTextLocation(graphics, Vorkath.getCanvasTextLocation(graphics, Integer.toString(7 - plugin.hits), Vorkath.getLogicalHeight() + 40), Integer.toString(7 - plugin.hits), config.CounterColor());
 			graphics.setFont(FontManager.getRunescapeFont());
 		}

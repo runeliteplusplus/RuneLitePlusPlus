@@ -32,4 +32,12 @@ public interface VorkathConfig extends Config {
 	)
 	default boolean BoldText() { return true; }
 
+	@ConfigItem(
+			position = 3,
+			keyName = "enumConfig",
+			name = "Fireball Tile Highlight",
+			description = "Select how to apply tile highlighting for Vorkath's fireball attack"
+	)
+	default TileHighlight TileHighlight() { return TileHighlight.All; }
+
 }
