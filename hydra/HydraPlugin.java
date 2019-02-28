@@ -31,6 +31,9 @@ public class HydraPlugin extends Plugin
 	private HydraOverlay HydraOverlay;
 
 	@Inject
+	private HydraPrayOverlay HydraPrayOverlay;
+
+	@Inject
 	private Client client;
 
 	@Inject
@@ -47,11 +50,13 @@ public class HydraPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception {
 		overlayManager.add(HydraOverlay);
+		overlayManager.add(HydraPrayOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception {
 		overlayManager.remove(HydraOverlay);
+		overlayManager.remove(HydraPrayOverlay);
 		hydras.clear();
 		hydraattacks.clear();
 	}
