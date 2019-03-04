@@ -34,6 +34,9 @@ public class HydraPlugin extends Plugin
 	private HydraPrayOverlay HydraPrayOverlay;
 
 	@Inject
+	private HydraIndicatorOverlay HydraIndicatorOverlay;
+
+	@Inject
 	private Client client;
 
 	@Inject
@@ -46,17 +49,20 @@ public class HydraPlugin extends Plugin
 
 	Map<Integer, Integer> hydras = new HashMap<>();
 	Map<Integer, Integer> hydraattacks = new HashMap<>();
+	NPC Hydra;
 
 	@Override
 	protected void startUp() throws Exception {
 		overlayManager.add(HydraOverlay);
 		overlayManager.add(HydraPrayOverlay);
+		overlayManager.add(HydraIndicatorOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception {
 		overlayManager.remove(HydraOverlay);
 		overlayManager.remove(HydraPrayOverlay);
+		overlayManager.remove(HydraIndicatorOverlay);
 		hydras.clear();
 		hydraattacks.clear();
 	}
@@ -97,12 +103,16 @@ public class HydraPlugin extends Plugin
 	@Subscribe
 	public void onAnimationChanged(AnimationChanged event) {
 		Actor monster = event.getActor();
+		Actor local = client.getLocalPlayer();
 		if (monster instanceof NPC) {
 			NPC hydra = (NPC) monster;
 			if (hydra.getCombatLevel() != 0 && hydra.getName() != null) {
 				if (hydra.getName().equalsIgnoreCase("Hydra")) {
 					if (hydras.containsKey(hydra.getIndex())) {
 						if (hydra.getAnimation() == 8261 || hydra.getAnimation() == 8262) {
+							if (hydra.getInteracting().equals(local)) {
+								Hydra = hydra;
+							}
 							if (hydraattacks.containsKey(hydra.getIndex())) {
 								int lastattack = hydraattacks.get(hydra.getIndex());
 								hydraattacks.replace(hydra.getIndex(), hydra.getAnimation());
