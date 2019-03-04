@@ -1,5 +1,6 @@
 package net.runelite.client.plugins.zulrah;
 
+import net.runelite.api.events.AnimationChanged;
 import net.runelite.client.eventbus.Subscribe;
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -40,6 +41,9 @@ public class ZulrahPlugin extends Plugin
 	private ZulrahTileOverlay ZulrahTileOverlay;
 
 	@Inject
+	private ZulrahJadOverlay ZulrahJadOverlay;
+
+	@Inject
 	private Client client;
 
 	@Inject
@@ -74,12 +78,14 @@ public class ZulrahPlugin extends Plugin
 	protected void startUp() throws Exception {
 		overlayManager.add(ZulrahOverlay);
 		overlayManager.add(ZulrahTileOverlay);
+		overlayManager.add(ZulrahJadOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception {
 		overlayManager.remove(ZulrahOverlay);
 		overlayManager.remove(ZulrahTileOverlay);
+		overlayManager.remove(ZulrahJadOverlay);
 	}
 
 	LocalPoint ZulrahPosCenter = new LocalPoint(6720, 7616);
@@ -109,6 +115,8 @@ public class ZulrahPlugin extends Plugin
 	boolean phase4 = true;
 	boolean restart = false;
 	boolean prayerconserve = false;
+	int jadphase;
+	boolean jadflip = false;
 	Color nztcolor;
 	LocalPoint nextzulrahtile;
 	LocalPoint nexttile;
@@ -143,6 +151,19 @@ public class ZulrahPlugin extends Plugin
 		if (!config.EnableZulrah()) {
 			return;
 		}
+
+		if (phase4 && phases.size() == 11) {
+			jadphase = 1;
+		} else if (phase3 && phases.size() == 10) {
+            jadphase = 1;
+		} else if (phase2 && phases.size() == 9) {
+            jadphase = 2;
+		} else if (phase1 && phases.size() == 9) {
+            jadphase = 2;
+		} else {
+            jadphase = 0;
+            jadflip = false;
+        }
 
 		boolean foundzulrah = false;
 		for (NPC monster : client.getNpcs())
@@ -531,9 +552,32 @@ public class ZulrahPlugin extends Plugin
 				prayerconserve = false;
 				not = 0;
 				nextprayerendticks = 0;
+				jadphase = 0;
+				jadflip = false;
 			}
 		}
 	}
+
+	@Subscribe
+    public void onAnimationChanged(AnimationChanged event) {
+        Actor Zulrhyboy = event.getActor();
+        if (Zulrhyboy != null && Zulrhyboy.getName() != null) {
+            if (Zulrhyboy instanceof NPC) {
+                if (Zulrhyboy.equals(Zulrah)) {
+                    if (jadphase > 0) {
+                        if (Zulrhyboy.getAnimation() == 5069) {
+                            if (!jadflip) {
+                                jadflip = true;
+                            } else {
+                                jadflip = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 	public Color zulrahtype(int type) {
 		switch(type) {

@@ -21,4 +21,12 @@ public interface ZulrahConfig extends Config {
 			description = "Configures whether or not to show when to pray at Zulrah."
 	)
 	default boolean EnableZulrahPrayerHelper() { return true; }
+
+	@ConfigItem(
+			position = 2,
+			keyName = "jadphasehelper",
+			name = "Jad Phase Helper",
+			description = "Tells you what to pray against Zulrah jad phase"
+	)
+	default boolean ZulrahJadHelper() { return true; }
 }
