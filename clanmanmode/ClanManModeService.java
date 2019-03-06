@@ -11,6 +11,7 @@ import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
+import net.runelite.api.coords.WorldPoint;
 
 @Singleton
 public class ClanManModeService
@@ -35,6 +36,8 @@ public class ClanManModeService
 		int maxatk = plugin.clanmin + plugin.wildernessLevel;
 		final Player localPlayer = client.getLocalPlayer();
 		final String localName = localPlayer.getName();
+		int selfmin = localPlayer.getCombatLevel() - plugin.wildernessLevel;
+		int selfmax = localPlayer.getCombatLevel() + plugin.wildernessLevel;
 		for (Player player : client.getPlayers())
 		{
 			if (player == null || player.getName() == null) {
@@ -68,14 +71,30 @@ public class ClanManModeService
 					if (config.highlightAttacked()) {
 						if (interactor != null) {
 							if (!interactors.containsKey(interactor.getName())) {
-								if (interacting.getCombatLevel() <= maxatk && interacting.getCombatLevel() >= minatk && !interactor.isClanMember()) {
-									interactors.put(interactor.getName(), player.getName());
-									consumer.accept(interactor, config.getClanAttackableColor());
+								WorldPoint a = interactor.getWorldLocation();
+								int underLevel = ((a.getY() - 9920) / 8) + 1;
+								int upperLevel = ((a.getY() - 3520) / 8) + 1;
+								int wildernessLevel = a.getY() > 6400 ? underLevel : upperLevel;
+								if (config.CalcSelfCB()) {
+									if (interacting.getCombatLevel() + wildernessLevel <= selfmax && interacting.getCombatLevel() - wildernessLevel >= selfmin && !interactor.isClanMember()) {
+										interactors.put(interactor.getName(), player.getName());
+										consumer.accept(interactor, config.getClanAttackableColor());
+									}
+								} else {
+									if (interacting.getCombatLevel() + wildernessLevel <= maxatk && interacting.getCombatLevel() - wildernessLevel >= minatk && !interactor.isClanMember()) {
+										interactors.put(interactor.getName(), player.getName());
+										consumer.accept(interactor, config.getClanAttackableColor());
+									}
 								}
 							}
 						}
 					}
 				} else {
+					if (config.PersistentClan()) {
+						if (plugin.clan.containsKey(player.getName())) {
+							consumer.accept(player, config.getClanMemberColor());
+						}
+					}
 					if (config.highlightAttacked()) {
 						if (interactors.containsKey(player.getName())) {
 							String attackername = interactors.get(player.getName());
@@ -109,8 +128,22 @@ public class ClanManModeService
 						if ((config.hideAttackable() && plugin.ticks >= config.hideTime()) || plugin.clan.containsKey(player.getName())) {
 							continue;
 						}
-						if (player.getCombatLevel() <= maxatk && player.getCombatLevel() >= minatk) {
-							consumer.accept(player, config.getAttackableColor());
+						WorldPoint a = player.getWorldLocation();
+						int underLevel = ((a.getY() - 9920) / 8) + 1;
+						int upperLevel = ((a.getY() - 3520) / 8) + 1;
+						int wildernessLevel = a.getY() > 6400 ? underLevel : upperLevel;
+						int wildydiff = plugin.wildernessLevel - wildernessLevel;
+						if (wildydiff < 0) {
+							wildydiff = 0;
+						}
+						if (config.CalcSelfCB()) {
+							if (player.getCombatLevel() <= selfmax && player.getCombatLevel() - wildydiff >= selfmin) {
+								consumer.accept(player, config.getAttackableColor());
+							}
+						} else {
+							if (player.getCombatLevel() <= maxatk && player.getCombatLevel() - wildydiff >= minatk) {
+								consumer.accept(player, config.getAttackableColor());
+							}
 						}
 					}
 				}
