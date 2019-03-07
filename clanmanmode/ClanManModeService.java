@@ -75,13 +75,17 @@ public class ClanManModeService
 								int underLevel = ((a.getY() - 9920) / 8) + 1;
 								int upperLevel = ((a.getY() - 3520) / 8) + 1;
 								int wildernessLevel = a.getY() > 6400 ? underLevel : upperLevel;
+								int wildydiff = plugin.wildernessLevel - wildernessLevel;
+								if (wildydiff < 0) {
+									wildydiff = 0;
+								}
 								if (config.CalcSelfCB()) {
-									if (interacting.getCombatLevel() + wildernessLevel <= selfmax && interacting.getCombatLevel() - wildernessLevel >= selfmin && !interactor.isClanMember()) {
+									if (interacting.getCombatLevel() <= selfmax && interacting.getCombatLevel() - wildydiff >= selfmin && !interactor.isClanMember()) {
 										interactors.put(interactor.getName(), player.getName());
 										consumer.accept(interactor, config.getClanAttackableColor());
 									}
 								} else {
-									if (interacting.getCombatLevel() + wildernessLevel <= maxatk && interacting.getCombatLevel() - wildernessLevel >= minatk && !interactor.isClanMember()) {
+									if (interacting.getCombatLevel() <= maxatk && interacting.getCombatLevel() - wildydiff >= minatk && !interactor.isClanMember()) {
 										interactors.put(interactor.getName(), player.getName());
 										consumer.accept(interactor, config.getClanAttackableColor());
 									}
