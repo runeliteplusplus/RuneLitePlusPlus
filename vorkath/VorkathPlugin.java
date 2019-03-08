@@ -30,6 +30,9 @@ public class VorkathPlugin extends Plugin
 	private VorkathOverlay VorkathOverlay;
 
 	@Inject
+	private VorkathIndicatorOverlay VorkathIndicatorOverlay;
+
+	@Inject
 	private Client client;
 
 	@Inject
@@ -54,11 +57,13 @@ public class VorkathPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception {
 		overlayManager.add(VorkathOverlay);
+		overlayManager.add(VorkathIndicatorOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception {
 		overlayManager.remove(VorkathOverlay);
+		overlayManager.remove(VorkathIndicatorOverlay);
 		Vorkath = null;
 		hits = 0;
 		fireball = null;

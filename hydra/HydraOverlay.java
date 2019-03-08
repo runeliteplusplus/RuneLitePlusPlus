@@ -30,6 +30,9 @@ public class HydraOverlay extends Overlay {
 
 	@Override
 	public Dimension render(Graphics2D graphics) {
+		if (!config.TextIndicator()) {
+			return null;
+		}
 
 		for (NPC hydra : client.getNpcs()) {
 			if (hydra == null || hydra.getName() == null) {
@@ -42,21 +45,19 @@ public class HydraOverlay extends Overlay {
 						if (config.BoldText()) {
 							graphics.setFont(FontManager.getRunescapeBoldFont());
 						}
-						if (config.TextIndicator()) {
-							if (plugin.hydraattacks.containsKey(hydra.getIndex())) {
-								int attack = plugin.hydraattacks.get(hydra.getIndex());
-								if (attack == 8261) {
-									if (val == 3) {
-										OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "MAGE", hydra.getLogicalHeight() + 100), "MAGE", Color.BLUE);
-									} else {
-										OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "RANGE", hydra.getLogicalHeight() + 100), "RANGE", Color.GREEN);
-									}
-								} else if (attack == 8262) {
-									if (val == 3) {
-										OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "RANGE", hydra.getLogicalHeight() + 100), "RANGE", Color.GREEN);
-									} else {
-										OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "MAGE", hydra.getLogicalHeight() + 100), "MAGE", Color.BLUE);
-									}
+						if (plugin.hydraattacks.containsKey(hydra.getIndex())) {
+							int attack = plugin.hydraattacks.get(hydra.getIndex());
+							if (attack == 8261) {
+								if (val == 3) {
+									OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "MAGE", hydra.getLogicalHeight() + 100), "MAGE", Color.BLUE);
+								} else {
+									OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "RANGE", hydra.getLogicalHeight() + 100), "RANGE", Color.GREEN);
+								}
+							} else if (attack == 8262) {
+								if (val == 3) {
+									OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "RANGE", hydra.getLogicalHeight() + 100), "RANGE", Color.GREEN);
+								} else {
+									OverlayUtil.renderTextLocation(graphics, hydra.getCanvasTextLocation(graphics, "MAGE", hydra.getLogicalHeight() + 100), "MAGE", Color.BLUE);
 								}
 							}
 						}

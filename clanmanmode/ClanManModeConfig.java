@@ -130,4 +130,39 @@ public interface ClanManModeConfig extends Config
 			description = "How many ticks after you are logged in that attackbles are hidden (1 tick = 0.6 seconds)"
 	)
 	default int hideTime() { return 5; }
+
+	@ConfigItem(
+			position = 12,
+			keyName = "mycblvl",
+			name = "Calc targets on my own combat level",
+			description = "Calculates potential targets based off your own combat lvl instead of clans"
+	)
+	default boolean CalcSelfCB() { return false; }
+
+	@ConfigItem(
+			position = 13,
+			keyName = "hideatkopt",
+			name = "Hide attack option for clan members",
+			description = "Disables attack option for clan members"
+	)
+	default boolean hideAtkOpt() { return false; }
+
+	@ConfigItem(
+			position = 14,
+			keyName = "showclanmembers",
+			name = "Persistent Clan Members",
+			description = "Will highlight clan members even when not in clan chat"
+	)
+	default boolean PersistentClan() { return false; }
+
+	@ConfigItem(
+			position = 15,
+			keyName = "clancolor",
+			name = "Clan Member Color",
+			description = "Color of clan members"
+	)
+	default Color getClanMemberColor()
+	{
+		return new Color(255, 0, 0);
+	}
 }

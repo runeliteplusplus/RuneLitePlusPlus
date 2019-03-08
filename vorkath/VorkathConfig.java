@@ -40,4 +40,12 @@ public interface VorkathConfig extends Config {
 	)
 	default TileHighlight TileHighlight() { return TileHighlight.All; }
 
+	@ConfigItem(
+			position = 4,
+			keyName = "overlayindicators",
+			name = "Overlay Indicators",
+			description = "Configures if an overlay box displaying vorkath information should be displayed."
+	)
+	default boolean VorkathBox() { return false; }
+
 }

@@ -1,34 +1,25 @@
 package net.runelite.client.plugins.clanmanmode;
 
 import net.runelite.client.eventbus.Subscribe;
-import com.google.errorprone.annotations.Var;
 import com.google.inject.Provides;
-import java.awt.Color;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
-
 import net.runelite.api.*;
-
-import static net.runelite.api.ClanMemberRank.UNRANKED;
-import static net.runelite.api.MenuAction.*;
-
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
-import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.game.ClanManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.client.util.ColorUtil;
+import net.runelite.client.util.Text;
+import org.apache.commons.lang3.ArrayUtils;
 
 @PluginDescriptor(
 	name = "Clan Man Mode",
@@ -115,4 +106,30 @@ public class ClanManModePlugin extends Plugin
 			clanmax = Collections.max(clan.values());
 		}
 	}
+
+	@Subscribe
+	public void onMenuEntryAdded(MenuEntryAdded event) {
+		if (!config.hideAtkOpt()) {
+			return;
+		}
+		if (client.getGameState() != GameState.LOGGED_IN) {
+			return;
+		}
+
+		final String option = Text.removeTags(event.getOption()).toLowerCase();
+
+		if (option.equals("attack")) {
+			final Pattern ppattern = Pattern.compile("<col=ffffff>(.+?)<col=");
+			final Matcher pmatch = ppattern.matcher(event.getTarget());
+			pmatch.find();
+			if (pmatch.group(1) != null) {
+				if (clan.containsKey(pmatch.group(1).replace(" ", " "))) {
+					MenuEntry[] entries = client.getMenuEntries();
+					entries = ArrayUtils.removeElement(entries, entries[entries.length - 1]);
+					client.setMenuEntries(entries);
+				}
+			}
+		}
+	}
+
 }
