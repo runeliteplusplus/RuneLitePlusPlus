@@ -122,11 +122,13 @@ public class ClanManModePlugin extends Plugin
 			final Pattern ppattern = Pattern.compile("<col=ffffff>(.+?)<col=");
 			final Matcher pmatch = ppattern.matcher(event.getTarget());
 			pmatch.find();
-			if (pmatch.group(1) != null) {
-				if (clan.containsKey(pmatch.group(1).replace(" ", " "))) {
-					MenuEntry[] entries = client.getMenuEntries();
-					entries = ArrayUtils.removeElement(entries, entries[entries.length - 1]);
-					client.setMenuEntries(entries);
+			if (pmatch.matches()) {
+				if (pmatch.group(1) != null) {
+					if (clan.containsKey(pmatch.group(1).replace(" ", " "))) {
+						MenuEntry[] entries = client.getMenuEntries();
+						entries = ArrayUtils.removeElement(entries, entries[entries.length - 1]);
+						client.setMenuEntries(entries);
+					}
 				}
 			}
 		}
