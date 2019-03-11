@@ -135,7 +135,7 @@ public class VorkathPlugin extends Plugin
 		Actor local = client.getLocalPlayer();
 		if (vorki instanceof NPC) {
 			if (vorki.equals(Vorkath)) {
-				if (vorki.getAnimation() != -1 && vorki.getAnimation() != 7948) {
+				if (vorki.getAnimation() != -1 && vorki.getAnimation() != 7948 && vorki.getAnimation() != 7952) {
 					if (ice) {
 						ice = false;
 					} else {
