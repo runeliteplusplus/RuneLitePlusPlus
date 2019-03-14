@@ -37,6 +37,7 @@ public class FreezeTimersService
 			String name = player.getName();
 			int freezetype = plugin.freezetype(name);
 			long dtime = plugin.opponentfreezetime(name);
+			long tbed = plugin.istbed(name);
 			int freezetime = 0;
 			if (freezetype == 1 || freezetype == 4) {
 				freezetime = 5000;
@@ -61,10 +62,12 @@ public class FreezeTimersService
 					WorldPoint lastWorldPoint = plugin.playerpos(name);
 					if (currentWorldPoint.equals(lastWorldPoint)) {
 						consumer.accept(player, config.FreezeTimerColor());
+						return;
 					} else {
 						if (timediff < 605) {
 							plugin.updatepos(name, currentWorldPoint);
 							consumer.accept(player, config.FreezeTimerColor());
+							return;
 						} else {
 							plugin.deleteopponent(name);
 						}
@@ -72,10 +75,15 @@ public class FreezeTimersService
 				} else {
 					if (timediff < freezetime + 3000) {
 						consumer.accept(player, Color.YELLOW);
+						return;
 					} else {
 						plugin.deleteopponent(name);
 					}
 				}
+			}
+			if (tbed > 0) {
+				consumer.accept(player, config.FreezeTimerColor());
+				return;
 			}
 		}
 	}

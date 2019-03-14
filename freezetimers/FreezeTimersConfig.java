@@ -32,4 +32,28 @@ public interface FreezeTimersConfig extends Config {
 	default Color FreezeTimerColor() {
 		return new Color(0, 184, 212);
 	}
+
+	@ConfigItem(
+			position = 3,
+			keyName = "timerpos",
+			name = "Freeze Timer Position",
+			description = "Position of freeze timer"
+	)
+	default int FreezeTimerPos() { return 80; }
+
+	@ConfigItem(
+			position = 4,
+			keyName = "timerfont",
+			name = "Bold Freeze Timer",
+			description = "Bold font or not"
+	)
+	default boolean BoldFont() { return false; }
+
+	@ConfigItem(
+			position = 5,
+			keyName = "tbtimer",
+			name = "Tele Block Timer",
+			description = "Enables tele block timer"
+	)
+	default boolean TBTimer() { return true; }
 }

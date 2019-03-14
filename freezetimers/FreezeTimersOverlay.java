@@ -50,60 +50,113 @@ public class FreezeTimersOverlay extends Overlay
 		int timer = 0;
 		String name = actor.getName();
 		int freezetype = plugin.freezetype(name);
-		int offset = actor.getLogicalHeight() + 30;
 		long dtime = plugin.opponentfreezetime(name);
+		long tbed = plugin.istbed(name);
 		Point textLocation = null;
+		long currenttime = System.currentTimeMillis();
 		HeadIcon headIcon = actor.getOverheadIcon();
 		int freezetime = 0;
-		if (freezetype == 1 || freezetype == 4) {
-			freezetime = 5000;
-		} else if (freezetype == 2 || freezetype == 5) {
-			freezetime = 10000;
-		} else if (freezetype == 3 || freezetype == 6) {
-			freezetime = 15000;
-		} else if (freezetype == 7) {
-			freezetime = 20000;
-		} else if (freezetype == 8) {
-			freezetime = 2500;
-		} else if (freezetype == 9) {
-			freezetime = 5000;
-		} else if (freezetype == 10) {
-			freezetime = 7500;
-		}
+		boolean frozenoverlay = false;
+		if (dtime > 0) {
+			if (freezetype == 1 || freezetype == 4) {
+				freezetime = 5000;
+			} else if (freezetype == 2 || freezetype == 5) {
+				freezetime = 10000;
+			} else if (freezetype == 3 || freezetype == 6) {
+				freezetime = 15000;
+			} else if (freezetype == 7) {
+				freezetime = 20000;
+			} else if (freezetype == 8) {
+				freezetime = 2500;
+			} else if (freezetype == 9) {
+				freezetime = 5000;
+			} else if (freezetype == 10) {
+				freezetime = 7500;
+			}
 
-		long currenttime = System.currentTimeMillis();
-		long timediff = currenttime - dtime;
-		timer = (freezetime - (int) timediff) / 1000;
+			long timediff = currenttime - dtime;
+			timer = (freezetime - (int) timediff) / 1000;
 
-		if (timediff < freezetime) {
-			textLocation = actor.getCanvasTextLocation(graphics, Integer.toString(timer), offset);
-			textLocation = new Point(textLocation.getX(), textLocation.getY() - 80);
-		} else {
-			if (timediff < freezetime + 3000) {
-				textLocation = actor.getCanvasTextLocation(graphics, Integer.toString(timer), offset);
-				textLocation = new Point(textLocation.getX(), textLocation.getY() - 40);
-				graphics.setFont(FontManager.getRunescapeBoldFont());
-				if (headIcon != null) {
-					textLocation = new Point(textLocation.getX(), textLocation.getY() - 40);
-				}
-				OverlayUtil.renderTextLocation(graphics, textLocation, Integer.toString(timer), color);
-				return;
+			if (timediff < freezetime) {
+				textLocation = actor.getCanvasTextLocation(graphics, Integer.toString(timer), actor.getLogicalHeight() + config.FreezeTimerPos());
+				textLocation = new Point(textLocation.getX(), textLocation.getY() - config.FreezeTimerPos());
 			} else {
-				plugin.deleteopponent(name);
+				if (timediff < freezetime + 3000) {
+					textLocation = actor.getCanvasTextLocation(graphics, Integer.toString(timer), actor.getLogicalHeight() + config.FreezeTimerPos());
+					textLocation = new Point(textLocation.getX(), textLocation.getY() - config.FreezeTimerPos());
+					if (headIcon != null) {
+						textLocation = new Point(textLocation.getX(), textLocation.getY() - config.FreezeTimerPos());
+					}
+					if (config.BoldFont()) {
+						graphics.setFont(FontManager.getRunescapeBoldFont());
+					}
+					frozenoverlay = true;
+					OverlayUtil.renderTextLocation(graphics, textLocation, Integer.toString(timer), color);
+					return;
+				} else {
+					plugin.deleteopponent(name);
+				}
+			}
+
+			if (textLocation != null) {
+				BufferedImage clanchatImage = plugin.GetFreezeIcon(freezetype - 1);
+
+				if (clanchatImage != null) {
+					Point imageLocation = new Point(textLocation.getX(), textLocation.getY() - (config.FreezeTimerPos() / 2));
+					if (config.BoldFont()) {
+						graphics.setFont(FontManager.getRunescapeBoldFont());
+					}
+					frozenoverlay = true;
+					OverlayUtil.renderTextLocation(graphics, textLocation, Integer.toString(timer), color);
+					OverlayUtil.renderImageLocation(graphics, imageLocation, clanchatImage);
+				}
 			}
 		}
 
-		if (textLocation != null)
-		{
-			BufferedImage clanchatImage = plugin.GetFreezeIcon(freezetype - 1);
+		if (config.TBTimer()) {
+			if (tbed > 0) {
+				int type = plugin.tbtype(name);
+				int tbexpiry;
+				if (type > 0) {
+					if (type == 1) {
+						tbexpiry = 300000;
+					} else if (type == 2) {
+						tbexpiry = 150000;
+					} else {
+						return;
+					}
+					long tbtime = currenttime - tbed;
+					int tbtimer = (tbexpiry - (int) tbtime) / 1000;
+					if (tbtime < tbexpiry) {
+						textLocation = actor.getCanvasTextLocation(graphics, Integer.toString(tbtimer), actor.getLogicalHeight() + config.FreezeTimerPos());
+						if (frozenoverlay) {
+							textLocation = new Point(textLocation.getX() + 40, textLocation.getY() - config.FreezeTimerPos());
+						} else {
+							textLocation = new Point(textLocation.getX(), textLocation.getY() - config.FreezeTimerPos());
+						}
+					} else {
+						plugin.deletetb(name);
+					}
 
-			if (clanchatImage != null) {
-				int width = clanchatImage.getWidth();
-				int textHeight = graphics.getFontMetrics().getHeight() - graphics.getFontMetrics().getMaxDescent();
-				Point imageLocation = new Point(textLocation.getX() - 10, textLocation.getY() - 40);
-				graphics.setFont(FontManager.getRunescapeFont());
-				OverlayUtil.renderTextLocation(graphics, textLocation, Integer.toString(timer), color);
-				OverlayUtil.renderImageLocation(graphics, imageLocation, clanchatImage);
+					if (textLocation != null) {
+						BufferedImage clanchatImage = plugin.GetFreezeIcon(10);
+
+						if (clanchatImage != null) {
+							if (config.BoldFont()) {
+								graphics.setFont(FontManager.getRunescapeBoldFont());
+							}
+							Point imageLocation = null;
+							if (frozenoverlay) {
+								imageLocation = new Point(textLocation.getX() + 5, textLocation.getY() - (config.FreezeTimerPos() / 2));
+							} else {
+								imageLocation = new Point(textLocation.getX(), textLocation.getY() - (config.FreezeTimerPos() / 2));
+							}
+							OverlayUtil.renderTextLocation(graphics, textLocation, Integer.toString(tbtimer), color);
+							OverlayUtil.renderImageLocation(graphics, imageLocation, clanchatImage);
+						}
+					}
+				}
+
 			}
 		}
 	}

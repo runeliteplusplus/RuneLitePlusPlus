@@ -60,7 +60,8 @@ public class FreezeTimersPlugin extends Plugin
 			SpriteID.SPELL_ICE_BARRAGE,
 			SpriteID.SPELL_BIND,
 			SpriteID.SPELL_SNARE,
-			SpriteID.SPELL_ENTANGLE
+			SpriteID.SPELL_ENTANGLE,
+			SpriteID.SPELL_TELE_BLOCK
 	};
 
 	private static final Dimension FREEZE_ICON_DIMENSION = new Dimension(25, 25);
@@ -87,11 +88,16 @@ public class FreezeTimersPlugin extends Plugin
 		overlayManager.remove(FreezeTimersTileOverlay);
 		frozenthings.clear();
 		frozenthingpoints.clear();
+		freezetype.clear();
+		tbedthings.clear();
+		tbtypes.clear();
 	}
 
 	Map<String, Long> frozenthings = new HashMap<>();
 	Map<String, WorldPoint> frozenthingpoints = new HashMap<>();
 	Map<String, Integer> freezetype = new HashMap<>();
+	Map<String, Long> tbedthings = new HashMap<>();
+	Map<String, Integer> tbtypes = new HashMap<>();
 
 
 	Map<Integer, Integer> magexp = new HashMap<>();
@@ -203,6 +209,15 @@ public class FreezeTimersPlugin extends Plugin
 						frozenthings.put(currtarget, System.currentTimeMillis());
 						frozenthingpoints.put(currtarget, targetpos);
 						freezetype.put(currtarget, 7);
+					} else if (spell.equals("Tele Block") && xp == 95) {
+						if (config.TBTimer()) {
+							if (praymage) {
+								tbtypes.put(currtarget, 2);
+							} else {
+								tbtypes.put(currtarget, 1);
+							}
+							tbedthings.put(currtarget, System.currentTimeMillis());
+						}
 					}
 				}
 		}
@@ -248,6 +263,20 @@ public class FreezeTimersPlugin extends Plugin
 		return 0;
 	}
 
+	public long istbed(String name) {
+		if (tbedthings.containsKey(name)) {
+			return tbedthings.get(name);
+		}
+		return 0;
+	}
+
+	public int tbtype(String name) {
+		if (tbtypes.containsKey(name)) {
+			return tbtypes.get(name);
+		}
+		return 0;
+	}
+
 	public void deleteopponent(String name) {
 		if (frozenthings.containsKey(name)) {
 			frozenthings.remove(name);
@@ -257,6 +286,15 @@ public class FreezeTimersPlugin extends Plugin
 		}
 		if (freezetype.containsKey(name)) {
 			freezetype.remove(name);
+		}
+	}
+
+	public void deletetb(String name) {
+		if (tbedthings.containsKey(name)) {
+			tbedthings.remove(name);
+		}
+		if (tbtypes.containsKey(name)) {
+			tbtypes.remove(name);
 		}
 	}
 
