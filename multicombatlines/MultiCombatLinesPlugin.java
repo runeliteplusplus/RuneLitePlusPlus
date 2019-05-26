@@ -214,9 +214,9 @@ public class MultiCombatLinesPlugin extends Plugin
     private void findLinesInScene()
     {
         inDeadman = client.getWorldType().stream().anyMatch(x ->
-                x == WorldType.DEADMAN || x == WorldType.SEASONAL_DEADMAN);
+                x == WorldType.DEADMAN || x == WorldType.SEASONAL_DEADMAN || x == WorldType.DEADMAN_TOURNAMENT);
         inPvp = client.getWorldType().stream().anyMatch(x ->
-                x == WorldType.PVP || x == WorldType.PVP_HIGH_RISK);
+                x == WorldType.PVP);
 
         Rectangle sceneRect = new Rectangle(
                 client.getBaseX() + 1, client.getBaseY() + 1,
